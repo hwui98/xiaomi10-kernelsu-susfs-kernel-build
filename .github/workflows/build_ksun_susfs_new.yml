@@ -44,7 +44,7 @@ jobs:
         run: |
           cd $GITHUB_WORKSPACE/kernel_workspace/android_kernel
           curl -LSs "https://raw.githubusercontent.com/rifsxd/KernelSU-Next/next-susfs/kernel/setup.sh" | bash -s next-susfs
-
+          
       - name: 4.修补KernelSU Next
         run: |
           ls
