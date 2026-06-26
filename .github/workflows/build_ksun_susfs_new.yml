@@ -62,13 +62,49 @@ jobs:
       - name: 5.5 应用 DroidSpaces 配置
         run: |
           cd $GITHUB_WORKSPACE/kernel_workspace/android_kernel
-          echo "🚀 应用 DroidSpaces 配置..."
-          for patch in $GITHUB_WORKSPACE/patches/*.patch; do
-            if [ -f "$patch" ]; then
-              echo "应用 patch: $(basename $patch)"
-              patch -p1 < "$patch" || echo "⚠️  Patch $(basename $patch) 可能有冲突"
-            fi
-          done
+          echo "🚀 正在添加 DroidSpaces 配置..."
+          
+          echo "" >> arch/arm64/configs/vendor/umi_defconfig
+          echo "# =============== DroidSpaces Full Support (4.19) ===============" >> arch/arm64/configs/vendor/umi_defconfig
+          echo "CONFIG_SYSCTL=y" >> arch/arm64/configs/vendor/umi_defconfig
+          echo "CONFIG_SYSVIPC=y" >> arch/arm64/configs/vendor/umi_defconfig
+          echo "CONFIG_POSIX_MQUEUE=y" >> arch/arm64/configs/vendor/umi_defconfig
+          echo "CONFIG_NAMESPACES=y" >> arch/arm64/configs/vendor/umi_defconfig
+          echo "CONFIG_UTS_NS=y" >> arch/arm64/configs/vendor/umi_defconfig
+          echo "CONFIG_IPC_NS=y" >> arch/arm64/configs/vendor/umi_defconfig
+          echo "CONFIG_PID_NS=y" >> arch/arm64/configs/vendor/umi_defconfig
+          echo "CONFIG_NET_NS=y" >> arch/arm64/configs/vendor/umi_defconfig
+          echo "CONFIG_SECCOMP=y" >> arch/arm64/configs/vendor/umi_defconfig
+          echo "CONFIG_SECCOMP_FILTER=y" >> arch/arm64/configs/vendor/umi_defconfig
+          echo "CONFIG_CGROUPS=y" >> arch/arm64/configs/vendor/umi_defconfig
+          echo "CONFIG_CGROUP_DEVICE=y" >> arch/arm64/configs/vendor/umi_defconfig
+          echo "CONFIG_CGROUP_PIDS=y" >> arch/arm64/configs/vendor/umi_defconfig
+          echo "CONFIG_MEMCG=y" >> arch/arm64/configs/vendor/umi_defconfig
+          echo "CONFIG_CGROUP_SCHED=y" >> arch/arm64/configs/vendor/umi_defconfig
+          echo "CONFIG_FAIR_GROUP_SCHED=y" >> arch/arm64/configs/vendor/umi_defconfig
+          echo "CONFIG_CGROUP_FREEZER=y" >> arch/arm64/configs/vendor/umi_defconfig
+          echo "CONFIG_CGROUP_NET_PRIO=y" >> arch/arm64/configs/vendor/umi_defconfig
+          echo "CONFIG_DEVTMPFS=y" >> arch/arm64/configs/vendor/umi_defconfig
+          echo "CONFIG_OVERLAY_FS=y" >> arch/arm64/configs/vendor/umi_defconfig
+          echo "CONFIG_TMPFS_POSIX_ACL=y" >> arch/arm64/configs/vendor/umi_defconfig
+          echo "CONFIG_TMPFS_XATTR=y" >> arch/arm64/configs/vendor/umi_defconfig
+          echo "CONFIG_FW_LOADER=y" >> arch/arm64/configs/vendor/umi_defconfig
+          echo "CONFIG_USER_NS=y" >> arch/arm64/configs/vendor/umi_defconfig
+          echo "CONFIG_VETH=y" >> arch/arm64/configs/vendor/umi_defconfig
+          echo "CONFIG_BRIDGE=y" >> arch/arm64/configs/vendor/umi_defconfig
+          echo "CONFIG_NETFILTER=y" >> arch/arm64/configs/vendor/umi_defconfig
+          echo "CONFIG_NETFILTER_ADVANCED=y" >> arch/arm64/configs/vendor/umi_defconfig
+          echo "CONFIG_NF_CONNTRACK=y" >> arch/arm64/configs/vendor/umi_defconfig
+          echo "CONFIG_IP_NF_IPTABLES=y" >> arch/arm64/configs/vendor/umi_defconfig
+          echo "CONFIG_NF_NAT=y" >> arch/arm64/configs/vendor/umi_defconfig
+          echo "CONFIG_ANDROID_PARANOID_NETWORK=n" >> arch/arm64/configs/vendor/umi_defconfig
+          echo "CONFIG_IP_NF_FILTER=y" >> arch/arm64/configs/vendor/umi_defconfig
+          echo "CONFIG_IP_NF_TARGET_MASQUERADE=y" >> arch/arm64/configs/vendor/umi_defconfig
+          echo "CONFIG_NETFILTER_XT_TARGET_MASQUERADE=y" >> arch/arm64/configs/vendor/umi_defconfig
+          
+          echo "✅ DroidSpaces 配置已追加"
+          echo "defconfig 最后 30 行："
+          tail -n 30 arch/arm64/configs/vendor/umi_defconfig
         
       - name: 6.开始构建
         run: |
