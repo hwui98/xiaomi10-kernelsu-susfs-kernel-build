@@ -52,20 +52,23 @@ jobs:
           cp $GITHUB_WORKSPACE/kernel_workspace/src/patches/* .
           echo "已经过预修复"
 
-      - name: 5.修补susfs
+      - name: 5.跳过 SUSFS（仅 KernelSU-Next + DroidSpaces）
         run: |
-            echo "选择susfs修补"
-            cd $GITHUB_WORKSPACE/kernel_workspace/android_kernel
-            echo "复制susfs/kernel_patches/fs/"
-            cp $GITHUB_WORKSPACE/kernel_workspace/susfs/kernel_patches/fs/* ./fs/
-            echo "复制susfs/kernel_patches/include/linux/"
-            cp $GITHUB_WORKSPACE/kernel_workspace/susfs/kernel_patches/include/linux/* ./include/linux/
-            echo "复制susfs内核补丁"
-            cp $GITHUB_WORKSPACE/kernel_workspace/susfs/kernel_patches/50_add_susfs_in_kernel-4.19.patch .
-            echo "执行susfs补丁"
-            patch -p1 < 50_add_susfs_in_kernel-4.19.patch || true
-            echo "修复susfs补丁"
-            patch -p1 < after_patch_fix.patch
+          echo "✅ 已跳过 SUSFS 修补"
+          echo "当前只启用 KernelSU-Next + DroidSpaces"
+          cd $GITHUB_WORKSPACE/kernel_workspace/android_kernel
+          ls -l | head -n 10   # 可选：查看当前目录，方便调试
+
+      - name: 应用 DroidSpaces 配置
+        run: |
+          cd $GITHUB_WORKSPACE/kernel_workspace/android_kernel
+          echo "🚀 应用 DroidSpaces 配置..."
+          for patch in $GITHUB_WORKSPACE/patches/*.patch; do
+            if [ -f "$patch" ]; then
+              echo "应用 patch: $(basename $patch)"
+              patch -p1 < "$patch" || echo "⚠️  Patch $(basename $patch) 可能有冲突"
+            fi
+          done
         
       - name: 6.开始构建
         run: |
