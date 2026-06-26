@@ -44,7 +44,7 @@ jobs:
         run: |
           cd $GITHUB_WORKSPACE/kernel_workspace/android_kernel
           curl -LSs "https://raw.githubusercontent.com/rifsxd/KernelSU-Next/next-susfs/kernel/setup.sh" | bash -s next-susfs
-          
+
       - name: 4.修补KernelSU Next
         run: |
           ls
@@ -52,33 +52,20 @@ jobs:
           cp $GITHUB_WORKSPACE/kernel_workspace/src/patches/* .
           echo "已经过预修复"
 
-      - name: 5.跳过 SUSFS（仅 KernelSU-Next + DroidSpaces）
+      - name: 5.修补susfs
         run: |
-          echo "✅ 已跳过 SUSFS 修补"
-          echo "当前只启用 KernelSU-Next + DroidSpaces"
-          cd $GITHUB_WORKSPACE/kernel_workspace/android_kernel
-          ls -l | head -n 10   # 可选：查看当前目录，方便调试
-
-      - name: 5.5 添加 DroidSpaces 配置
-        run: |
-          cd $GITHUB_WORKSPACE/kernel_workspace/android_kernel
-          echo "🚀 添加 DroidSpaces 配置..."
-          echo "" >> arch/arm64/configs/vendor/umi_defconfig
-          echo "# DroidSpaces Support" >> arch/arm64/configs/vendor/umi_defconfig
-          echo "CONFIG_NAMESPACES=y" >> arch/arm64/configs/vendor/umi_defconfig
-          echo "CONFIG_UTS_NS=y" >> arch/arm64/configs/vendor/umi_defconfig
-          echo "CONFIG_IPC_NS=y" >> arch/arm64/configs/vendor/umi_defconfig
-          echo "CONFIG_PID_NS=y" >> arch/arm64/configs/vendor/umi_defconfig
-          echo "CONFIG_NET_NS=y" >> arch/arm64/configs/vendor/umi_defconfig
-          echo "CONFIG_CGROUPS=y" >> arch/arm64/configs/vendor/umi_defconfig
-          echo "CONFIG_CGROUP_DEVICE=y" >> arch/arm64/configs/vendor/umi_defconfig
-          echo "CONFIG_OVERLAY_FS=y" >> arch/arm64/configs/vendor/umi_defconfig
-          echo "CONFIG_USER_NS=y" >> arch/arm64/configs/vendor/umi_defconfig
-          echo "CONFIG_VETH=y" >> arch/arm64/configs/vendor/umi_defconfig
-          echo "CONFIG_BRIDGE=y" >> arch/arm64/configs/vendor/umi_defconfig
-          echo "CONFIG_ANDROID_PARANOID_NETWORK=n" >> arch/arm64/configs/vendor/umi_defconfig
-          echo "✅ 基础 DroidSpaces 配置已追加"
-          tail -n 15 arch/arm64/configs/vendor/umi_defconfig 
+            echo "选择susfs修补"
+            cd $GITHUB_WORKSPACE/kernel_workspace/android_kernel
+            echo "复制susfs/kernel_patches/fs/"
+            cp $GITHUB_WORKSPACE/kernel_workspace/susfs/kernel_patches/fs/* ./fs/
+            echo "复制susfs/kernel_patches/include/linux/"
+            cp $GITHUB_WORKSPACE/kernel_workspace/susfs/kernel_patches/include/linux/* ./include/linux/
+            echo "复制susfs内核补丁"
+            cp $GITHUB_WORKSPACE/kernel_workspace/susfs/kernel_patches/50_add_susfs_in_kernel-4.19.patch .
+            echo "执行susfs补丁"
+            patch -p1 < 50_add_susfs_in_kernel-4.19.patch || true
+            echo "修复susfs补丁"
+            patch -p1 < after_patch_fix.patch
         
       - name: 6.开始构建
         run: |
