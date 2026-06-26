@@ -59,7 +59,7 @@ jobs:
           cd $GITHUB_WORKSPACE/kernel_workspace/android_kernel
           ls -l | head -n 10   # 可选：查看当前目录，方便调试
 
-      - name: 应用 DroidSpaces 配置
+      - name: 5.5 应用 DroidSpaces 配置
         run: |
           cd $GITHUB_WORKSPACE/kernel_workspace/android_kernel
           echo "🚀 应用 DroidSpaces 配置..."
